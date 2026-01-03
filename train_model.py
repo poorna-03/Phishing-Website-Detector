@@ -11,7 +11,6 @@ data = pd.read_csv("phishing_data.csv")
 X = data["URL"].apply(extract_features).tolist()
 y = data["Label"]
 
-
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
