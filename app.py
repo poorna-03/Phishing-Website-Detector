@@ -11,22 +11,22 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.get_json()
-    url = data["url"]
+    try:
+        data = request.get_json()
+        url = data.get("url")
 
-    features = extract_features(url)
-    prediction = model.predict([features])[0]
-    probability = model.predict_proba([features])[0][prediction]
+        features = extract_features(url)
+        prediction = model.predict([features])[0]
+        confidence = max(model.predict_proba([features])[0])
 
-    if prediction == 1:
-        result = "🚨 Phishing Website"
-    else:
-        result = "✅ Legitimate Website"
+        result = "🚨 Phishing Website" if prediction == 1 else "✅ Legitimate Website"
 
-    return jsonify({
-        "result": result,
-        "confidence": round(probability * 100, 2)
-    })
+        return jsonify({
+            "result": result,
+            "confidence": round(confidence * 100, 2)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
