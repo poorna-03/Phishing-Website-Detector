@@ -3,7 +3,6 @@ from urllib.parse import urlparse
 
 def extract_features(url):
     features = []
-
     features.append(len(url))
 
    
