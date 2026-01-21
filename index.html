@@ -1,18 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Phishing Website Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="container">
-        <h1>🛡️ Phishing Website Detector</h1>
+        <header>
+            <h1>🛡️ Phishing Website Detector</h1>
+            <p class="subtitle">
+                Analyze URLs to detect potential phishing threats using ML-based heuristics
+            </p>
+        </header>
 
-        <input type="text" id="url" placeholder="Enter website URL">
-        <button onclick="checkURL()">Check URL</button>
+        <div class="card">
+            <label for="url">Website URL</label>
+            <input type="text" id="url" placeholder="https://example.com">
 
-        <h2 id="result"></h2>
-        <p id="note">(Demo version – ML runs locally)</p>
+            <button onclick="checkURL()">Analyze URL</button>
+
+            <div id="resultBox" class="hidden">
+                <h2 id="result"></h2>
+                <p id="confidence"></p>
+            </div>
+        </div>
+
+        <footer>
+            <p class="note">
+                ⚠️ Demo version – Machine Learning model runs locally
+            </p>
+            <p class="credits">
+                Built for Cybersecurity Project • Educational Use Only
+            </p>
+        </footer>
     </div>
 
     <script src="script.js"></script>
