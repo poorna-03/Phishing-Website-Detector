@@ -1,77 +1,72 @@
-// ====================================
-// Advanced Phishing Website Detector
-// ====================================
-
 function checkURL() {
 
-    const url = document.getElementById("url").value.trim();
+    const url = document.getElementById("url").value.trim().toLowerCase();
+
     const resultBox = document.getElementById("resultBox");
     const result = document.getElementById("result");
     const confidence = document.getElementById("confidence");
 
     if (url === "") {
-        alert("Please enter a URL!");
+        alert("Please enter a website URL");
         return;
     }
 
     let score = 0;
-    let reasons = [];
+    let flags = [];
 
-    // -----------------------
-    // Feature Checks
-    // -----------------------
+    // ---------- STRONG INDICATORS ----------
 
     if (!url.startsWith("https://")) {
-        score += 20;
-        reasons.push("No HTTPS");
-    }
-
-    if (url.length > 70) {
-        score += 15;
-        reasons.push("Very long URL");
+        score += 25;
+        flags.push("No HTTPS");
     }
 
     if (url.includes("@")) {
+        score += 30;
+        flags.push("@ symbol detected");
+    }
+
+    if (url.match(/[0-9]{4,}/)) {
+        score += 15;
+        flags.push("Too many numbers");
+    }
+
+    if (url.length > 75) {
         score += 20;
-        reasons.push("Contains @ symbol");
+        flags.push("Very long URL");
     }
 
     if (url.includes("-")) {
         score += 10;
-        reasons.push("Contains hyphen");
+        flags.push("Hyphen in domain");
     }
 
     if ((url.match(/\./g) || []).length > 4) {
         score += 15;
-        reasons.push("Too many dots");
+        flags.push("Multiple subdomains");
     }
 
-    if (url.match(/[0-9]{4,}/)) {
-        score += 10;
-        reasons.push("Many numbers");
+    // ---------- KEYWORD TRIGGERS ----------
+
+    if (url.match(/login|verify|secure|update|account|bank|paypal|free|bonus/i)) {
+        score += 25;
+        flags.push("Sensitive keywords");
     }
 
-    if (url.match(/login|verify|secure|bank|update/i)) {
-        score += 15;
-        reasons.push("Sensitive keywords");
+    if (url.match(/bit\.ly|tinyurl|goo\.gl|t\.co/i)) {
+        score += 30;
+        flags.push("Shortened URL");
     }
 
-    if (url.match(/bit\.ly|tinyurl|goo\.gl/i)) {
-        score += 20;
-        reasons.push("Shortened URL");
-    }
-
-    // -----------------------
-    // Classification
-    // -----------------------
+    // ---------- CLASSIFICATION ----------
 
     resultBox.classList.remove("hidden");
 
-    if (score >= 60) {
+    if (score >= 70) {
         result.innerHTML = "🚨 Phishing Website Detected!";
         result.style.color = "red";
     }
-    else if (score >= 35) {
+    else if (score >= 40) {
         result.innerHTML = "⚠️ Suspicious Website";
         result.style.color = "orange";
     }
@@ -82,6 +77,6 @@ function checkURL() {
 
     confidence.innerHTML =
         "Risk Score: " + score + "%<br>" +
-        "Red Flags: " + (reasons.length ? reasons.join(", ") : "None");
+        "Red Flags: " + (flags.length ? flags.join(", ") : "None");
 
 }
