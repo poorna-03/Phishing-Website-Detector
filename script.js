@@ -1,20 +1,31 @@
 function checkURL() {
 
-    const url = document.getElementById("url").value.trim().toLowerCase();
+    const urlInput = document.getElementById("url").value.trim();
+    const url = urlInput.toLowerCase();
 
     const resultBox = document.getElementById("resultBox");
     const result = document.getElementById("result");
     const confidence = document.getElementById("confidence");
 
-    if (url === "") {
-        alert("Please enter a website URL");
+    // -------------------------
+    // URL FORMAT VALIDATION
+    // -------------------------
+    const urlPattern = /^(https?:\/\/)[^\s/$.?#].[^\s]*$/i;
+
+    if (!urlPattern.test(url)) {
+        resultBox.classList.remove("hidden");
+        result.innerHTML = "❌ Invalid URL Format";
+        result.style.color = "red";
+        confidence.innerHTML = "Please enter a valid website URL (include http:// or https://)";
         return;
     }
 
     let score = 0;
     let flags = [];
 
-    // ---------- STRONG INDICATORS ----------
+    // -------------------------
+    // FEATURE CHECKS
+    // -------------------------
 
     if (!url.startsWith("https://")) {
         score += 25;
@@ -46,8 +57,6 @@ function checkURL() {
         flags.push("Multiple subdomains");
     }
 
-    // ---------- KEYWORD TRIGGERS ----------
-
     if (url.match(/login|verify|secure|update|account|bank|paypal|free|bonus/i)) {
         score += 25;
         flags.push("Sensitive keywords");
@@ -58,7 +67,9 @@ function checkURL() {
         flags.push("Shortened URL");
     }
 
-    // ---------- CLASSIFICATION ----------
+    // -------------------------
+    // CLASSIFICATION
+    // -------------------------
 
     resultBox.classList.remove("hidden");
 
@@ -78,5 +89,4 @@ function checkURL() {
     confidence.innerHTML =
         "Risk Score: " + score + "%<br>" +
         "Red Flags: " + (flags.length ? flags.join(", ") : "None");
-
 }
