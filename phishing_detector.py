@@ -49,5 +49,10 @@ def extract_features(url):
 
     # 13. Too many subdomains
     features.append(1 if urlparse(url).netloc.count('.') > 3 else 0)
+    features.append(url.count('www'))
+    features.append(url.count('%'))
+    features.append(len(urlparse(url).netloc))
+    features.append(1 if urlparse(url).netloc.count('.') > 3 else 0)
+
 
     return features
