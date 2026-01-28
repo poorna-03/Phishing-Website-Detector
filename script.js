@@ -1,63 +1,87 @@
-// ===============================
-// Phishing Website Detector JS
-// ===============================
+// ====================================
+// Advanced Phishing Website Detector
+// ====================================
 
 function checkURL() {
 
-    // Get elements
-    const urlInput = document.getElementById("url");
+    const url = document.getElementById("url").value.trim();
     const resultBox = document.getElementById("resultBox");
-    const resultText = document.getElementById("result");
-    const confidenceText = document.getElementById("confidence");
+    const result = document.getElementById("result");
+    const confidence = document.getElementById("confidence");
 
-    const url = urlInput.value.trim();
-
-    // -------------------------
-    // Validation
-    // -------------------------
     if (url === "") {
-        alert("Please enter a website URL!");
+        alert("Please enter a URL!");
         return;
     }
 
-    // -------------------------
-    // Feature Extraction
-    // -------------------------
     let score = 0;
-    let totalChecks = 8;
+    let reasons = [];
 
-    if (url.startsWith("http://")) score++;                 // No HTTPS
-    if (url.length > 75) score++;                            // Long URL
-    if (url.includes("@")) score++;                          // @ symbol
-    if (url.includes("-")) score++;                          // Hyphen
-    if ((url.match(/\./g) || []).length > 3) score++;       // Many dots
-    if (url.includes("login") || url.includes("verify") || url.includes("bank")) score++;
-    if (!url.includes("https://")) score++;                  // Missing HTTPS
-    if (url.match(/[0-9]{4,}/)) score++;                     // Too many numbers
+    // -----------------------
+    // Feature Checks
+    // -----------------------
 
-    // -------------------------
-    // Confidence Calculation
-    // -------------------------
-    let riskPercent = Math.round((score / totalChecks) * 100);
-
-    // -------------------------
-    // Show Result
-    // -------------------------
-    resultBox.classList.remove("hidden");
-
-    if (riskPercent >= 60) {
-        resultText.innerHTML = "⚠️ Phishing Website Detected!";
-        resultText.style.color = "#ff4d4d";
-    } 
-    else if (riskPercent >= 35) {
-        resultText.innerHTML = "⚠️ Suspicious Website";
-        resultText.style.color = "#ffa500";
-    } 
-    else {
-        resultText.innerHTML = "✅ Website Looks Safe";
-        resultText.style.color = "#2ecc71";
+    if (!url.startsWith("https://")) {
+        score += 20;
+        reasons.push("No HTTPS");
     }
 
-    confidenceText.innerHTML = "Risk Score: " + riskPercent + "%";
+    if (url.length > 70) {
+        score += 15;
+        reasons.push("Very long URL");
+    }
+
+    if (url.includes("@")) {
+        score += 20;
+        reasons.push("Contains @ symbol");
+    }
+
+    if (url.includes("-")) {
+        score += 10;
+        reasons.push("Contains hyphen");
+    }
+
+    if ((url.match(/\./g) || []).length > 4) {
+        score += 15;
+        reasons.push("Too many dots");
+    }
+
+    if (url.match(/[0-9]{4,}/)) {
+        score += 10;
+        reasons.push("Many numbers");
+    }
+
+    if (url.match(/login|verify|secure|bank|update/i)) {
+        score += 15;
+        reasons.push("Sensitive keywords");
+    }
+
+    if (url.match(/bit\.ly|tinyurl|goo\.gl/i)) {
+        score += 20;
+        reasons.push("Shortened URL");
+    }
+
+    // -----------------------
+    // Classification
+    // -----------------------
+
+    resultBox.classList.remove("hidden");
+
+    if (score >= 60) {
+        result.innerHTML = "🚨 Phishing Website Detected!";
+        result.style.color = "red";
+    }
+    else if (score >= 35) {
+        result.innerHTML = "⚠️ Suspicious Website";
+        result.style.color = "orange";
+    }
+    else {
+        result.innerHTML = "✅ Website Looks Safe";
+        result.style.color = "green";
+    }
+
+    confidence.innerHTML =
+        "Risk Score: " + score + "%<br>" +
+        "Red Flags: " + (reasons.length ? reasons.join(", ") : "None");
 
 }
