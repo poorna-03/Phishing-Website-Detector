@@ -1,7 +1,7 @@
 // ===============================
 // Phishing Website Detector JS
 // ===============================
-<script src="script.js"></script>
+
 function checkURL() {
 
     // Get elements
